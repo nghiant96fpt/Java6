@@ -28,6 +28,6 @@ public class LoginService {
 	    throw new IllegalArgumentException("Invalid username or password");
 	}
 
-	return jwtUtil.generateToken(username);
+	return jwtUtil.generateToken(username, user.getRole());
     }
 }

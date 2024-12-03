@@ -1,5 +1,8 @@
 package com.fpoly.java6.services;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +37,14 @@ public class UserService {
 	user.setRole(role);
 
 	return userRepository.save(user);
+    }
+
+    public List<UserEntity> getAll() {
+	return userRepository.findAll();
+    }
+
+    public UserEntity findByUsername(String username) {
+	Optional<UserEntity> userOptional = userRepository.findByUsername(username);
+	return userOptional.isPresent() ? userOptional.get() : null;
     }
 }

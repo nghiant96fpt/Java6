@@ -2,6 +2,8 @@ package com.fpoly.java6.components;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -19,14 +21,22 @@ public class JwtUtil {
 	return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String generateToken(String username) {
-	return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+    public String generateToken(String username, String role) {
+	Map<String, Object> claims = new HashMap<>();
+	claims.put("role", role);
+	claims.put("username", username);
+	return Jwts.builder().setSubject(username).setClaims(claims).setIssuedAt(new Date())
 		.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 		.signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
     }
 
     public String extractUsername(String token) {
 	return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String extractRole(String token) {
+	return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody().get("role",
+		String.class);
     }
 
     public boolean validateToken(String token, String username) {
